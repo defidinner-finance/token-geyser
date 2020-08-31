@@ -1,4 +1,5 @@
 pragma solidity 0.5.0;
+// ABIEncoderV2 added for Flow Protocol
 pragma experimental ABIEncoderV2;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
