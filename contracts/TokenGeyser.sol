@@ -1,4 +1,5 @@
 pragma solidity 0.5.0;
+pragma experimental ABIEncoderV2;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -149,7 +150,7 @@ contract TokenGeyser is IStaking, Ownable {
      * @param amount Number of deposit tokens to stake.
      * @param data Not used.
      */
-    function stakeFor(address user, uint256 amount, bytes calldata data) external {
+    function stakeFor(address user, uint256 amount, bytes calldata data) external onlyOwner {
         _stakeFor(msg.sender, user, amount);
     }
 
@@ -313,6 +314,40 @@ contract TokenGeyser is IStaking, Ownable {
             .mul(newRewardTokens)
             .div(oneHundredPct);
         return currentRewardTokens.add(bonusedReward);
+    }
+    
+    // getUserStakes, getUserTotals, getTotalStakingShareSeconds, getLastAccountingTimestamp functions added for Flow Protocol
+
+    /**
+     * @param addr The user to look up staking information for.
+     * @return The UserStakes for this address.
+     */
+    function getUserStakes(address addr) public view returns (Stake[] memory){
+        Stake[] memory userStakes = _userStakes[addr];
+        return userStakes;
+    }
+
+    /**
+     * @param addr The user to look up staking information for.
+     * @return The UserTotals for this address.
+     */
+    function getUserTotals(address addr) public view returns (UserTotals memory) {
+        UserTotals memory userTotals = _userTotals[addr];
+        return userTotals;
+    }
+
+    /**
+     * @return The total staking share seconds.
+     */
+    function getTotalStakingShareSeconds() public view returns (uint256) {
+        return _totalStakingShareSeconds;
+    }
+
+    /**
+     * @return The last global accounting timestamp.
+     */
+    function getLastAccountingTimestamp() public view returns (uint256) {
+        return _lastAccountingTimestampSec;
     }
 
     /**
